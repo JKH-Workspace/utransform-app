@@ -1,46 +1,118 @@
-# utransform-app
+<p align="center">
+  <img src=".me/app-icon.png" alt="uTransform" width="128" height="128">
+</p>
 
-어떤 형태의 입력이든 원하는 JSON 양식으로 변환하는 macOS 데스크톱 앱.
+<h1 align="center">uTransform</h1>
 
-이메일, 슬랙 메시지, 이미지, 웹페이지 등 아무 데이터나 넣으면 미리 등록해둔 JSON 양식으로 자동 변환해준다.
-LLM 변환은 로컬의 Claude Code를 사용하므로 별도 서버나 API 키가 필요 없다.
+<p align="center">
+  <strong>Transform any data into structured JSON with local AI</strong>
+</p>
 
-## 사전 요구사항
+<p align="center">
+  <a href="https://github.com/JKH-Workspace/utransform-app/releases/latest"><img src="https://img.shields.io/github/v/release/JKH-Workspace/utransform-app?style=flat-square&color=6366f1" alt="Latest Release"></a>
+  <a href="https://github.com/JKH-Workspace/utransform-app/releases"><img src="https://img.shields.io/github/downloads/JKH-Workspace/utransform-app/total?style=flat-square&color=6366f1" alt="Downloads"></a>
+  <a href="https://github.com/JKH-Workspace/utransform-app/blob/main/LICENSE"><img src="https://img.shields.io/github/license/JKH-Workspace/utransform-app?style=flat-square" alt="License"></a>
+  <a href="https://github.com/JKH-Workspace/utransform-app/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/JKH-Workspace/utransform-app/ci.yml?style=flat-square&label=CI" alt="CI"></a>
+</p>
 
-- macOS (Apple Silicon만 지원)
-- Claude Code 설치 및 로그인 완료
-- 터미널에서 `claude -p "hello"` 가 동작하는지 확인
+<p align="center">
+  Paste emails, Slack messages, images, web pages, or any unstructured data — uTransform converts it into your predefined JSON templates using local Claude Code. No servers, no API keys.
+</p>
 
-## 설치
+---
 
-### 터미널 한 줄 설치 (추천)
+## Features
+
+- **Universal Input** — Text, files (PDF, Excel, images), URLs, clipboard — anything goes
+- **Custom JSON Templates** — Define your own output schemas with a visual editor
+- **Parallel Processing** — Run multiple templates simultaneously on the same input
+- **100% Local** — Powered by [Claude Code](https://docs.anthropic.com/en/docs/claude-code) running on your machine
+- **Privacy First** — Your data never leaves your computer
+- **Transform History** — Auto-saved results for easy reference
+
+## Installation
+
+### One-line Install (Recommended)
 
 ```bash
-curl -fsSL https://github.com/jkhworkspace/utransform-app/releases/latest/download/uTransform_macos_aarch64.tar.gz | tar -xz -C /Applications/
+curl -fsSL https://github.com/JKH-Workspace/utransform-app/releases/latest/download/uTransform_macos_aarch64.tar.gz \
+  | tar -xz -C /Applications/
 ```
 
-### DMG로 설치
+### DMG Installer
 
-[Releases](https://github.com/jkhworkspace/utransform-app/releases) 페이지에서 `.dmg` 파일을 받아 설치.
-브라우저로 다운로드한 경우 Gatekeeper 경고가 뜰 수 있다. 이 경우:
+Download the latest `.dmg` from the [Releases](https://github.com/JKH-Workspace/utransform-app/releases/latest) page and drag to Applications.
 
-1. 앱을 한 번 실행 시도한다 (차단 알림이 뜸)
-2. **시스템 설정 → 개인정보 보호 및 보안** 으로 이동
-3. 하단의 **"확인 없이 열기"** 버튼을 클릭
+> **Note:** Since the app is not notarized, macOS may show a Gatekeeper warning. To allow it:
+> 1. Try opening the app (it will be blocked)
+> 2. Go to **System Settings > Privacy & Security**
+> 3. Click **"Open Anyway"**
 
-### 소스에서 빌드
+### Build from Source
 
-[Rust](https://www.rust-lang.org/tools/install)와 Node.js가 필요하다.
+Requires [Rust](https://www.rust-lang.org/tools/install) and [Node.js](https://nodejs.org/) (v18+).
 
 ```bash
-git clone https://github.com/jkhworkspace/utransform-app.git
+git clone https://github.com/JKH-Workspace/utransform-app.git
 cd utransform-app
 npm install
 npm run tauri build
 ```
 
-빌드 완료 후:
-- `src-tauri/target/release/bundle/macos/uTransform.app` → 더블클릭으로 실행
-- `src-tauri/target/release/bundle/dmg/` → DMG 설치 파일
+Build outputs:
+- **App bundle:** `src-tauri/target/release/bundle/macos/uTransform.app`
+- **DMG installer:** `src-tauri/target/release/bundle/dmg/uTransform_*.dmg`
 
-설치 후 **별도 서버를 띄울 필요 없이** 앱만 실행하면 된다.
+## Prerequisites
+
+- **macOS** (Apple Silicon only)
+- **Claude Code** installed and logged in
+- Verify with: `claude -p "hello"`
+
+## How It Works
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Any Input   │ --> │   Template   │ --> │ Structured   │
+│  (text, file,│     │  (your JSON  │     │    JSON      │
+│   URL, image)│     │    schema)   │     │   Output     │
+└──────────────┘     └──────────────┘     └──────────────┘
+                           |
+                    Claude Code (local)
+```
+
+1. **Add inputs** — Paste text, drag files, or enter URLs
+2. **Select templates** — Choose one or more JSON schemas
+3. **Transform** — Hit Cmd+Enter and get structured JSON instantly
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19 + TypeScript + Tailwind CSS 4 |
+| Backend | Rust + [Tauri v2](https://tauri.app/) |
+| Build | Vite 7 |
+| AI | Claude Code CLI (local) |
+
+## Contributing
+
+Contributions are welcome! Please read the [Contributing Guide](CONTRIBUTING.md) before submitting a PR.
+
+```bash
+# Development
+npm install
+npm run tauri dev
+
+# Run frontend only
+npm run dev
+```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  Made with Rust, React, and Claude Code
+</p>

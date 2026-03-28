@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run tauri build
+
+      - name: Prepare artifacts
+        run: |
+          # Find built artifacts
+          DMG=$(find src-tauri/target/release/bundle/dmg -name "*.dmg" | head -1)
+          APP_DIR="src-tauri/target/release/bundle/macos"
+
+          # Create tar.gz from .app bundle
+          cd "$APP_DIR"
+          tar -czf uTransform_macos_aarch64.tar.gz uTransform.app
+          cd -
+
+          # Move artifacts to a single directory
+          mkdir -p artifacts
+          cp "$DMG" artifacts/
+          cp "$APP_DIR/uTransform_macos_aarch64.tar.gz" artifacts/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-artifacts
+          path: artifacts/
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-artifacts
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
