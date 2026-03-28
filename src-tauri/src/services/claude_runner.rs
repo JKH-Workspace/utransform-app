@@ -41,7 +41,7 @@ fn build_prompt(inputs: &[String], template: &Template, count: usize) -> String 
     if !template.description.is_empty() {
         prompt.push_str(&format!("Purpose: {}\n", template.description));
     }
-    prompt.push_str("\n");
+    prompt.push('\n');
 
     // 복수 결과 지시 (시스템 프롬프트 캐싱을 위해 유저 프롬프트에 포함)
     if count > 1 {
@@ -85,7 +85,7 @@ fn build_prompt(inputs: &[String], template: &Template, count: usize) -> String 
         for (idx, path) in &files {
             prompt.push_str(&format!("[Input {}] {}\n", idx, path));
         }
-        prompt.push_str("\n");
+        prompt.push('\n');
     }
 
     if !urls.is_empty() {
@@ -93,7 +93,7 @@ fn build_prompt(inputs: &[String], template: &Template, count: usize) -> String 
         for (idx, url) in &urls {
             prompt.push_str(&format!("[Input {}] {}\n", idx, url));
         }
-        prompt.push_str("\n");
+        prompt.push('\n');
     }
 
     prompt.push_str("Process all inputs above and produce the JSON output matching the template schema.\n");
@@ -151,8 +151,8 @@ fn sanitize_schema_keys(
     match schema {
         serde_json::Value::Object(map) => {
             // properties 객체 안의 키들을 치환
-            if let Some(props) = map.get("properties") {
-                if let serde_json::Value::Object(prop_map) = props {
+            if let Some(serde_json::Value::Object(prop_map)) = map.get("properties") {
+                {
                     let mut new_props = serde_json::Map::new();
                     let mut new_required = Vec::new();
 

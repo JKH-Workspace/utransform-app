@@ -2,15 +2,9 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AppSettings {
     pub claude_path: Option<String>,
-}
-
-impl Default for AppSettings {
-    fn default() -> Self {
-        Self { claude_path: None }
-    }
 }
 
 fn settings_path() -> PathBuf {
