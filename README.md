@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".me/app-icon.png" alt="uTransform" width="128" height="128">
+  <img src="src-tauri/icons/128x128@2x.png" alt="uTransform" width="128" height="128">
 </p>
 
 <h1 align="center">uTransform</h1>
